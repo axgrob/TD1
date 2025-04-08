@@ -1,0 +1,85 @@
+
+#Exercice 1
+
+class Polynome:
+    def __init__(self,coeff):
+        self.value=coeff
+    def __str__(self):
+        p=str(self.value[0])
+
+
+        if self.value[0]>0:
+            p=str(self.value[1])+"x"+"+"+p
+
+        if self.value[0]<0:
+            p=str(self.value[1])+"x"+p
+
+        for k in range(2,len(self.value)):
+            if self.value[k]!=0:
+                if self.value[k-1]>0:
+                    p=str(self.value[k])+"x^"+str(k)+"+"+p
+                if self.value[k-1]<0:
+                    p=str(self.value[k])+"x^"+str(k)+"-"+p
+            else:
+                if self.value[k-1]<0:
+                    p=str(self.value[k])+"x^"+str(k)+"-"+p
+        return p
+
+
+    def __add__(self,poly2):
+       S=[]
+       n= min(len(self.value),len(poly2.value))
+       for k in range(n):
+           S.append(self.value[k]+poly2.value[k])
+       if len(poly2.value)>n:
+           for k in range(n,len(poly2.value)):
+               S.append(poly2.value[k])
+       else:
+           for k in range(n,len(self.value)):
+               S.append(self.value[k])
+       return Polynome(S)
+
+    def scalar(self,c):#exercice 3
+        for k in range(len(self.value)):
+            self.value[k]=self.value[k]*c
+
+print(Polynome([1,2,-3]) + Polynome([1,2]))
+
+
+#Exercice 2
+
+class Modulo:
+    def __init__(self,coeff,n,q):
+        v=coeff[n-1]
+        coeff[n-1]=coeff[n-1]-v
+        coeff[0]=coeff[0]-v
+        for k in range(len(coeff)):
+            while coeff[k]>=q:
+                coeff[k]=coeff[k]-q
+            while coeff[k]<=-q:
+                coeff[k]=coeff[k]+q
+        self.value=coeff
+    def __str__(self):
+        p=str(Polynome(self.value))
+        return p
+
+    def rescale(self,q,r):
+        for k in range(len(self.value)):
+            while self.value[k]>r:
+                self.value[k]=self.value[k]-r
+            while self.value[k]<-r:
+                self.value[k]=self.value[k]+r
+            if q<r:
+                while self.value[k]<r:
+                    self.value[k]=self.value[k]+q
+                while 0>self.value[k]>-r:
+                    self.value[k]=self.value[k]-r
+                if self.value[k]>r:
+                    self.value[k]=self.value
+
+
+
+
+
+
+print(Modulo([1,12,7],3,5))
