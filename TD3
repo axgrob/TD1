@@ -1,0 +1,58 @@
+###TD3
+
+#Exercice 2
+
+class Tree:
+    def __init__(self,label,*children):
+        self.__label=label
+        self.__children=children
+
+    def label(self):
+        return self.__label
+
+    def children(self):
+        return self.__children
+
+    def nb_children(self):
+        return len(self.__children)
+
+    def child(self,i):
+        return self.__children[i]
+
+    def is_leaf(self):
+        if len(self.__children)==0:
+            return True
+        else:
+            return False
+
+
+    def depth(self):
+        if self.is_leaf():
+            return 0
+        else:
+           return 1+max([c.depth() for c in self.__children])
+
+#Exercice 4
+    def __str__(self):
+        if self.depth()==0:
+            return self.__label
+        else:
+            A=[c for c in self.__children] # création de la liste des enfants
+            Chaine=str(self.__label) + "("+ str(A[0]) #début de la chaine de caractères
+            if len(A)>1:
+                for k in range(1,len(A)):
+                    Chaine=Chaine+","+str(A[k])
+            Chaine=Chaine+')'
+            return Chaine
+
+    def __eq__(self,Arbre):
+        A1=str(self)
+        A2=str(Arbre)
+        if A1==A2:
+            return True
+        return False
+
+
+#Exercice 5
+
+
