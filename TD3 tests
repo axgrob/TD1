@@ -1,0 +1,44 @@
+###TD3_TEST
+
+import unittest
+from TD3py import Tree
+
+
+class TestTree(unittest.TestCase):
+
+    def test_label(self):
+        Arbre=Tree('a',Tree('g'))
+        self.assertEqual(Arbre.label(),'a')
+
+    def test_child0(self):
+        G=Tree('a')
+        R=Tree('b')
+        Arbre=Tree('f',G,R)
+        self.assertEqual(Arbre.child(0),G)
+
+    def test_isleaf(self):
+        G=Tree('g')
+        self.assertTrue(G.is_leaf())
+
+    def testdepth(self):
+        G=Tree('a')
+        R=Tree('b')
+        Arbre=Tree('f',G,R)
+        self.assertEqual(Arbre.depth(),1)
+
+    def test_str(self):
+        G=Tree('a')
+        R=Tree('b')
+        Arbre=Tree('f',G,R)
+        self.assertEqual(str(Arbre),'f(a,b)')
+
+    def test_eq(self):
+        G=Tree('a')
+        R=Tree('b')
+        Arbre=Tree('f',G,R)
+        self.assertTrue(Arbre==Tree('f',Tree('a'),Tree('b')))
+
+
+
+if __name__ == '__main__':
+    unittest.main()
