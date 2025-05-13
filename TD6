@@ -1,0 +1,123 @@
+# TD6
+
+
+from tkinter import Tk,Canvas,Button
+from random import randint
+
+
+class App:
+    def __init__(self,data):
+
+        self.root = Tk("Hello")
+        self.root.geometry("400x400")
+        self.canvas=Canvas(self.root,bg="white")
+        self.canvas.grid(column=1,row=1)
+
+        self.mots=data[0]
+        self.nombre=data[1]
+        self.couleur=data[2]
+
+
+    def run_forever(self):
+
+
+
+        btn = Button(self.root, text="Permuter les couleurs", command=App.permuter_couleurs(self))#le bouton ne marche pas comme ceci mais en mettant app.permuter_couleurs cela fonctionne je ne comprends pas pourquoi
+        btn.grid(column=1, row=2)
+
+        btn2=Button(self.root,text="tri")
+        btn2.grid(column=2,row=2)
+
+        self.root.mainloop()
+
+    def permuter_couleurs(self):
+        couleurs_copie = self.couleur[:]  # copie des couleurs
+        couleurs_copie = couleurs_copie[1:] + couleurs_copie[:1]
+        self.couleur=couleurs_copie# permutation circulaire
+        App.redraw(self)
+
+    def redraw(self):
+        self.canvas.delete()
+        Mots=self.mots
+        for i in range(self.nombre):
+
+            a = 0
+            h=w=20
+            position=20*(i+1)
+            b=position
+            for k in range(len(self.mots[i])):
+                if Mots[i][k] == 'H':
+                    self.canvas.create_line(a, b, a + h, b, fill=self.couleur[i], width=2)
+                    a += h
+                elif self.mots[i][k] == 'U':
+                    self.canvas.create_line(a, b, a + h, b - w, fill=self.couleur[i], width=2)
+                    a += h
+                    b -= w
+                elif self.mots[i][k] == 'D':
+                    self.canvas.create_line(a, b, a + h, b + w, fill=self.couleur[i], width=2)
+                    a += h
+                    b += w
+
+
+
+
+
+
+
+
+class Data:
+    def __init__(self,entrelacs,Nfils):
+        self.nbr=Nfils
+        self.entrelacs=entrelacs
+
+    def tableau_mot(self):
+        N=self.nbr
+        Lmot = ["" for _ in range(N)]
+        lindex = [k for k in range(N)]
+
+        for k in range(len(self.entrelacs)):
+            index = self.entrelacs[k]
+            for i in range(len(Lmot)):
+                if lindex[i] < index and len(Lmot[i]) < 2 * k + 2 or lindex[i] > index + 1 and len(Lmot[i]) < 2 * k + 2:
+                    Lmot[i] += "HH"
+                if lindex[i] == index:
+                    Lmot[i] += "HD"
+                    lindex[i] += 1
+                if lindex[i] == index + 1 and len(Lmot[i]) < 2 * k + 2:
+                    Lmot[i] += "HU"
+                    lindex[i] -= 1
+        return Lmot
+
+"""
+    def aléatoire(self):
+        nfils=self.nbr
+        ncr=len(self.entrelacs)
+        fils= randint(1,nfils)#un nombre aléatoire de croisements et de fils
+        croisement=randint(1,ncr)
+        coul=["red","green","blue","black","magenta"]
+        L=[]
+        couleurs=[]
+        for k in range(croisement):
+            L.append(randint(1,fils))
+        for _ in range(fils):
+            couleurs.append(coul[randint(1,5)])
+        self.entrelacs=L
+        self.nbr=fils
+        return [Data.tableau_mot(self),couleurs]
+
+"""
+
+if __name__ == "__main__":
+
+    dat=Data([2, 1, 1, 0, 2],4)
+    print(dat.entrelacs)
+    b=Data.tableau_mot(dat)
+    print(b)
+
+    data=[b]+[4]+[["blue", "red", "green", "black"]]
+    print(data)
+    #print(Data.aléatoire(dat))
+
+
+    app = App(data)
+    app.run_forever()
