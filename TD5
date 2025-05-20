@@ -1,0 +1,140 @@
+#TD 5
+
+from tkinter import Tk,Canvas,Button
+
+
+
+
+
+#exercice 1
+
+def read_word(canvas, mot, h, w,b,color):
+    a=0
+    ids=[]
+    for k in range(len(mot)):
+        if mot[k]=='H':
+            line=canvas.create_line(a,b,a+h,b, fill=color, width=1)
+            a=a+h
+            ids.append(line)
+        if mot[k]=='U':
+            line=canvas.create_line(a,b,a+h,b-w,fill=color,width=1)
+            a=a+h
+            b=b-w
+            ids.append(line)
+        if mot[k]=='D':
+            line=canvas.create_line(a,b,a+h,b+w,fill=color,width=1)
+            a=a+h
+            b=b+w
+            ids.append(line)
+    return ids
+
+
+
+
+
+
+
+""""
+mot="HUHHDUH"
+w=50
+h=50
+read_word(canvas,mot,h,w)
+
+root.mainloop()
+
+"""
+
+#exercice 2
+"""pour 4 et ne marche pas
+def tableau_mot(tabl):
+    M1=""
+    M2=""
+    M3=""
+    M4=""
+    for k in range(len(tabl)):
+        if tabl[k]==2:
+            M1+="H"
+            M2+="H"
+            M3+="D"
+            M4+="U"
+        if tabl[k]==1:
+            M1+="H"
+            M2+="D"
+            M3+="U"
+            M4+="H"
+        if tabl[k]==0:
+            M1+="D"
+            M2+="U"
+            M3+="H"
+            M4+="H"
+    return [M1,M2,M3,M4]
+
+"""
+
+
+def tableau_mot(tabl,N):
+    Lmot=[""for k in range(N)]
+    lindex=[k for k in range(N)]#lindex=position
+    for k in range(len(tabl)):
+       index=tabl[k]
+
+       for i in range(len(Lmot)):
+           if lindex[i]<index and len(Lmot[i])<2*k+2 or lindex[i]>index+1 and len(Lmot[i])<2*k+2:
+               Lmot[i]+="HH"
+           if lindex[i]==index:
+               Lmot[i]+="HD"
+               lindex[i]+=1
+           if lindex[i]==index+1 and len(Lmot[i])<2*k+2:
+               Lmot[i]+="HU"
+               lindex[i]-=1
+    return Lmot
+
+
+def permutation(C):
+    return C[1:] + C[:1]  # rotation à gauche
+
+
+
+def permuter_couleurs(C,lignes_ids):
+    couleurs_copie = permutation(C)  # copie des couleurs
+      # permutation circulaire
+    for k in range(len(lignes_ids)):
+        for line_id in lignes_ids[k]:
+            canvas.itemconfig(line_id, fill=couleurs_copie[k])
+    # Met à jour les couleurs actuelles
+    for i in range(len(C)):
+        C[i] = couleurs_copie[i]
+
+
+
+
+
+
+print(tableau_mot([2,1,1,0,2],4))
+
+root = Tk("Hello")
+root.geometry("400x400")
+canvas=Canvas(root,bg="white")
+T= tableau_mot([2,1,1,0,2],4)
+w=20
+h=20
+C=["blue","red","green","black"]
+canvas.grid(column=1,row=1)
+positions = [20, 40, 60, 80]
+lignes_ids=[]
+for i in range(4):
+    ids = read_word(canvas, T[i], h, w, positions[i], C[i])
+    lignes_ids.append(ids)
+
+btn = Button(root, text="Permuter les couleurs", command=lambda: permuter_couleurs(C, lignes_ids))
+
+btn.grid(column=1, row=2)
+
+#je ne comprends pas pourquoi je ne parviens pas à inverser les couleurs
+
+root.mainloop()
+
+
+
+
+
