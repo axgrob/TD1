@@ -1,0 +1,90 @@
+#TD 8 Données
+from struct import unpack_from,pack
+
+
+f = open("the_wall.wav", "rb")
+data = f.read()
+
+print(len(data))
+print(data[35:36])
+
+#version 1 
+""""
+def extract(file):
+    f = open(file, "rb")
+    data = f.read()
+    L=[]
+    nbyte=unpack_from("I",data,40)[0]#car l
+    bechant=unpack_from("H",data,34)[0]
+    print(nbyte)
+    print(bechant)
+    if bechant==32:
+        a="i"
+    if bechant==16:
+        a="h"
+    print(a)
+        
+    print(unpack_from(a+a,data,44))
+    for k in range(nbyte//4-44):
+        L.append(unpack_from(a+a,data,k+44))
+    return L
+"""
+#cette version 1 du code recompose ne marche pas
+"""
+def recompose(liste):
+    f = open("the_wall.wav", "wb""
+    D=data[:44]
+    f.write(data)
+    n=len(liste[0])
+    for k in range(len(liste)):
+        f.write(pack('hh',liste[k][0],liste[k][1]))
+    return f
+    
+print(recompose(extract("the_wall.wav")))
+"""
+def extract(file):
+    with open(file, "rb") as f:
+        data = f.read()
+        
+    nbyte = unpack_from("I", data, 40)[0]
+    bechant = unpack_from("H", data, 34)[0]
+    
+    if bechant == 32:
+        fmt = "i"
+    elif bechant == 16:
+        fmt = "h"
+    else:
+        raise ValueError("Format non supporté")
+
+    L = []
+    for k in range(44, 44 + nbyte, 4):  # avance de 4 octets (2x 16 bits)
+        L.append(unpack_from(fmt + fmt, data, k))
+
+    return (L, data[:44], fmt)  # retourne aussi l'en-tête et le format
+
+
+
+
+
+
+def recompose(liste, header, fmt, outfile="output.wav"):
+    with open(outfile, "wb") as f:
+        f.write(header)# écriture de l'entete 
+        for left, right in liste:
+            f.write(pack(fmt + fmt, left, right))#écriture du reste en prenant en compte l'écriture en fmt= h ou i 
+
+
+#recompose(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#ceci fonctionne effectivement
+
+
+def recompose2(liste, header,fmt, outfile="output2.wav"):
+    with open(outfile,"wb") as f:
+        f.write(header)
+        L=liste[::2]
+        for left,right in L:
+            f.write(pack(fmt+fmt,left,right))
+            
+recompose2(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#cela accélère la musique
+
+
+#exercice 4 en interpolant on ralentit la musique.
