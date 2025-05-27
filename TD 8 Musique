@@ -8,7 +8,7 @@ data = f.read()
 print(len(data))
 print(data[35:36])
 
-#version 1 
+#version 1
 """"
 def extract(file):
     f = open(file, "rb")
@@ -23,7 +23,7 @@ def extract(file):
     if bechant==16:
         a="h"
     print(a)
-        
+
     print(unpack_from(a+a,data,44))
     for k in range(nbyte//4-44):
         L.append(unpack_from(a+a,data,k+44))
@@ -39,16 +39,16 @@ def recompose(liste):
     for k in range(len(liste)):
         f.write(pack('hh',liste[k][0],liste[k][1]))
     return f
-    
+
 print(recompose(extract("the_wall.wav")))
 """
 def extract(file):
     with open(file, "rb") as f:
         data = f.read()
-        
+
     nbyte = unpack_from("I", data, 40)[0]
     bechant = unpack_from("H", data, 34)[0]
-    
+
     if bechant == 32:
         fmt = "i"
     elif bechant == 16:
@@ -69,12 +69,12 @@ def extract(file):
 
 def recompose(liste, header, fmt, outfile="output.wav"):
     with open(outfile, "wb") as f:
-        f.write(header)# écriture de l'entete 
+        f.write(header)# écriture de l'entete
         for left, right in liste:
-            f.write(pack(fmt + fmt, left, right))#écriture du reste en prenant en compte l'écriture en fmt= h ou i 
+            f.write(pack(fmt + fmt, left, right))#écriture du reste en prenant en compte l'écriture en fmt= h ou i
 
 
-#recompose(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#ceci fonctionne effectivement
+recompose(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#ceci fonctionne effectivement
 
 
 def recompose2(liste, header,fmt, outfile="output2.wav"):
@@ -83,8 +83,27 @@ def recompose2(liste, header,fmt, outfile="output2.wav"):
         L=liste[::2]
         for left,right in L:
             f.write(pack(fmt+fmt,left,right))
-            
-recompose2(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#cela accélère la musique
+
+recompose2(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#cela accélère la musique x2
 
 
 #exercice 4 en interpolant on ralentit la musique.
+
+def recompose3(liste, header,fmt, outfile="output3.wav"):
+    with open(outfile,"wb") as f:
+        f.write(header)
+        L=[]
+        for k in range(len(liste)-1):
+            L.append(liste[k])
+            left=(liste[k][0]+liste[k+1][0])//2
+            right=(liste[k][1]+liste[k+1][1])//2
+            L.append((left,right))
+        for left,right in L:
+            f.write(pack(fmt+fmt,left,right))
+
+recompose3(extract("the_wall.wav")[0],extract("the_wall.wav")[1],extract("the_wall.wav")[2])#cela décélère d'un facteur 2 la musique
+
+###exercice 5
+#duplication d'un échantillon tous les 1/f échantillons si f<1 et suppression d'un échantillon tous les 1/f pour f
+
+
