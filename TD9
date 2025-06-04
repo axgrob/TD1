@@ -1,0 +1,74 @@
+#TD9
+
+
+class Polynomial:
+
+    def __init__(self, coeffs):
+        '''On stocke la liste des coefficients, par convention dans l'ordre croissant des puissances'''
+        self.coeffs = coeffs
+
+    def __str__(self):
+        monomials = []
+        for i in range(len(self.coeffs) - 1, -1, -1):
+            val = self.coeffs[i]
+            if val == 0:
+                continue
+        # On garde "1*" seulement pour X^1 ou plus
+            if val == 1 and i > 0:
+                monomials.append(f"X^{i}")
+            else:
+                monomials.append(f"{val}*X^{i}")
+        if len(monomials) == 0:
+            return "0"
+        joined = " + ".join(monomials)
+        return joined.replace("+ -", "- ").replace("X^1", "X").replace("*X^0", "")
+
+
+    def __add__(self, other):
+        output = []
+        for i in range(max(len(self.coeffs), len(other.coeffs))):
+            vm = self.coeffs[i] if i < len(self.coeffs) else 0
+            vn = other.coeffs[i] if i < len(other.coeffs) else 0
+            output.append(vm + vn)
+        return Polynomial(output)
+
+class PolynomialModulo:
+
+    def __init__(self, coeffs, q, n):
+        assert len(coeffs) <= n#Supposition pour simplifier le problème: on a pas besoin de calculer le modulo des puissances, seulement pour les coefficients
+        self.coeffs = [c % q for c in coeffs]
+        self.q = q
+        self.n = n
+
+    def __str__(self):
+        return str(Polynomial(self.coeffs))
+
+
+    def __add__(self,other):
+        return PolynomialModulo((Polynomial(self.coeffs)+Polynomial(other.coeffs)).coeffs,self.q,self.n)
+
+
+    def __mul__(self,other):
+        n=len(self.coeffs)
+        p=len(other.coeffs)
+        L=[0 for l in range(min(n*p,self.n))]
+        for k in range(n):
+            for i in range(p):
+                if k+i<=self.n-1:
+                    L[k+i]+=(self.coeffs[k])*(other.coeffs[i])
+        return PolynomialModulo(L,self.q,self.n)
+
+    def scalar(self, c):
+        scaled = [(coef * c) % self.q for coef in self.coeffs]
+        return PolynomialModulo(scaled, self.q, self.n)
+
+    def rescale(self, r):
+        return PolynomialModulo([coeff % r for coeff in self.coeffs], r, self.n)
+
+
+
+print(PolynomialModulo([1,12,7],3,5)+PolynomialModulo([1,10,22],3,5))
+print(PolynomialModulo([1,12,7],3,5))
+print(PolynomialModulo([1,10,22],3,5))
+print(PolynomialModulo([1,12,7],3,5)*PolynomialModulo([1,10,22],3,5))
+print(PolynomialModulo([1,10,22],3,5).scalar(19))
